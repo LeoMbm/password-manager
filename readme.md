@@ -3,7 +3,7 @@
 I build this project because I'm tired of lose my password, and I don't want to put all my stuff in some online "cloud, password dashboard" etc...
 It's a simple Python password manager. It allows you to securely save secrets with a simple CLI interface.
 
-[![MIT licensed](https://img.shields.io/badge/license-MIT-green.svg)](https://raw.githubusercontent.com/LeoMbm/password-manager/main/LICENSE)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-green.svg)](https://raw.githubusercontent.com/LeoMbm/password-manager/main/LICENSE.txt)
 
 
 

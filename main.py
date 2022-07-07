@@ -7,6 +7,8 @@ import psycopg2
 from getpass import getpass
 
 from simple_term_menu import TerminalMenu
+from termcolor import cprint
+
 
 dotenv.load_dotenv()
 
@@ -30,7 +32,7 @@ while loop:
                 conn.commit()
                 # cursor.close()
                 conn.close()
-                print('User Created, Please Login Again')
+                cprint('User Created, Please Login Again', 'green', attrs=['bold'])
                 sys.exit()
             except Exception as error:
                 print(error)
@@ -46,15 +48,15 @@ while loop:
             cur.execute(query)
             rows = cur.fetchall()
             if not rows:
-                print("This user doesn't exist")
+                cprint("This user doesn't exist", 'red', attrs=['bold'])
                 sys.exit()
             for r in rows:
                 hash_retrieve = bcrypt.checkpw(pw.encode('utf8'), r[2].encode('utf8'))
                 if not hash_retrieve:
-                    print("Login fail")
+                    cprint("Wrong Password", 'red', attrs=['bold'])
                     sys.exit()
                 else:
-                    print('Login Success ! Welcome in the password manager')
+                    cprint('Login Success ! Welcome in the password manager', 'green', attrs=['bold'])
 
 
         master_un = input("What's your username: ")
@@ -66,8 +68,8 @@ while loop:
             def store_password(usrnm, pwd, url):
                 try:
                     # TODO: WHAT IS CURSOR ?
-                    req = "INSERT INTO password (username, password, site) values (%s, %s, %s);"
-                    cur.execute(req, (usrnm, pwd, url))
+                    req = "INSERT INTO password (username, password, site, user_id) values (%s, %s, %s, %s);"
+                    cur.execute(req, (usrnm, pwd, url, 'SELECT id from users where id = %d'))
                     cur.execute("select * from password;")
                     # TODO: STORE PASSWORD WHERE ID = USERNAME
                     rows = cur.fetchall()
@@ -76,6 +78,7 @@ while loop:
                     conn.commit()
                     # cursor.close()
                     conn.close()
+                    cprint('Data Added', 'green', attrs=['bold'])
                     # TODO:
                 except(Exception, psycopg2.Error) as error:
                     print(error)
@@ -99,6 +102,7 @@ while loop:
                     cur.execute(que)
                     row = cur.fetchall()
                     for i in row:
+                        cprint(f'Here your data for {i[3]}', 'blue', attrs=['bold'])
                         print(i[1], i[2], i[3])
                 except(Exception, psycopg2.Error) as error:
                     print(error)
@@ -115,6 +119,7 @@ while loop:
                     cur.execute(query)
                     row = cur.fetchall()
                     for i in row:
+                        cprint(f'Here your data for {i[3]}', 'blue', attrs=['bold'])
                         print(i[0], i[1], i[2], i[3])
 
                 except(Exception, psycopg2.Error) as error:
@@ -128,9 +133,6 @@ while loop:
     if choice == "[Q] Exit":
         sys.exit()
 
-# FIXME: HE DOESNT CHECK THE PASSWORD, ANY PASSWORD WORKS
 
-
-# TODO: IMPLEMENT LOGIN WITH MASTER PASSWORD
 
 # TODO: WRITE LOGIC

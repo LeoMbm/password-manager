@@ -5,6 +5,7 @@ import bcrypt
 import dotenv
 import psycopg2
 from getpass import getpass
+from features import random_password
 
 from simple_term_menu import TerminalMenu
 from termcolor import cprint
@@ -14,7 +15,7 @@ dotenv.load_dotenv()
 
 
 main_menu = ["[A] Create new user", "[B] Log in", "[Q] Exit"]
-login_menu = ["[A] Create new data", "[B] View your data", "[C] Choice one data by site", "[Q] Exit"]
+login_menu = ["[A] Create new data", "[B] View your data", "[C] Choice one data by site", "[R] Generate random password", "[Q] Exit"]
 loop = True
 conn = dbconfig.dbconfig()
 cur = conn.cursor()
@@ -68,16 +69,13 @@ while loop:
             def store_password(usrnm, pwd, url):
                 try:
                     # TODO: WHAT IS CURSOR ?
-                    req = "INSERT INTO password (username, password, site, user_id) values (%s, %s, %s, %s);"
-                    cur.execute(req, (usrnm, pwd, url, 'SELECT id from users where id = %d'))
+                    req = "INSERT INTO password (username, password, site) values (%s, %s, %s);"
+                    cur.execute(req, (usrnm, pwd, url))
                     cur.execute("select * from password;")
                     # TODO: STORE PASSWORD WHERE ID = USERNAME
-                    rows = cur.fetchall()
-                    for r in rows:
-                        print(r[0], r[1], r[2], r[3])
                     conn.commit()
                     # cursor.close()
-                    conn.close()
+                    # conn.close()
                     cprint('Data Added', 'green', attrs=['bold'])
                     # TODO:
                 except(Exception, psycopg2.Error) as error:
@@ -86,12 +84,13 @@ while loop:
 
             def make_password(password):
                 pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-                print(bytes(pw))
-                return pw
+                password_hash = pw.decode('utf8')
+                print(password_hash)
+                return password_hash
 
 
             username_input = input("Type your username/email: ")
-            password_input = input("Type your password: ")
+            password_input = getpass()
             site_input = input("Type the site: ")
 
             store_password(str(username_input), make_password(str(password_input)), str(site_input))
@@ -120,13 +119,17 @@ while loop:
                     row = cur.fetchall()
                     for i in row:
                         cprint(f'Here your data for {i[3]}', 'blue', attrs=['bold'])
-                        print(i[0], i[1], i[2], i[3])
+                        print(i[1], i[2], i[3])
 
                 except(Exception, psycopg2.Error) as error:
                     print(error)
 
 
             get_one_data(str(site_input))
+        if choice == "[R] Generate random password":
+            password_count = int(input("How many password you want: "))
+            password_len = int(input("What length you want for your password: "))
+            random_password.random_password(password_count, password_len)
 
         if choice == "[Q] Exit":
             sys.exit()

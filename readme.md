@@ -13,7 +13,7 @@ It's a simple Python password manager. It allows you to securely save secrets wi
  - Within the database, each password and notes are encrypted with a unique salt using [bcrypt](https://pypi.org/project/bcrypt/)
  - Master key is hashed with a unique salt
  - Clipboard cleared automatically
- - Password suggestions with [password-generator-py](https://github.com/gabfl/password-generator-py)
+ - Generate random password 
  - Import / Export in Json
 
 ## Basic usage
